@@ -1,9 +1,10 @@
 import { getServerAuthSession } from "~/server/auth";
+import NotAuthorized from "../_components/common/NotAuthorized";
 
 export default async function Page() {
   const session = await getServerAuthSession();
   if (session?.user.role !== "admin") {
-    return <h1 className="text-red-500">Not authorized</h1>;
+    return <NotAuthorized />;
   }
   return (
     <div>

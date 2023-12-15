@@ -3,6 +3,8 @@ import "~/styles/globals.css";
 import { cookies } from "next/headers";
 
 import { TRPCReactProvider } from "~/trpc/react";
+import Sidebar from "../_components/common/Sider";
+import BottomBar from "../_components/common/BottomBar";
 
 export const metadata = {
   title: "Quiz App | Admin",
@@ -16,10 +18,12 @@ export default function AdminLayout({
   children: React.ReactNode;
 }) {
   return (
-    <section className="bg-black text-green-500">
-      <TRPCReactProvider cookies={cookies().toString()}>
+    <TRPCReactProvider cookies={cookies().toString()}>
+      <main className="flex h-screen flex-col bg-black text-green-500 md:flex-row">
+        <Sidebar />
         {children}
-      </TRPCReactProvider>
-    </section>
+        <BottomBar />
+      </main>
+    </TRPCReactProvider>
   );
 }
