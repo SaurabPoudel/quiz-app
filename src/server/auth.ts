@@ -43,7 +43,7 @@ const fetchUserRole = async (userId: string): Promise<string> => {
     select: { role: true },
   });
 
-  return user?.role || "defaultRole";
+  return user?.role ?? "defaultRole";
 };
 
 export const authOptions: NextAuthOptions = {
