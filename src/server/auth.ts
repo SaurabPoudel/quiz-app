@@ -15,12 +15,14 @@ import { db } from "~/server/db";
  *
  * @see https://next-auth.js.org/getting-started/typescript#module-augmentation
  */
+
+type UserRole = "admin" | "user";
 declare module "next-auth" {
   interface Session extends DefaultSession {
     user: {
       id: string;
       // ...other properties
-      // role: UserRole;
+      role: UserRole;
     } & DefaultSession["user"];
   }
 
@@ -35,15 +37,28 @@ declare module "next-auth" {
  *
  * @see https://next-auth.js.org/configuration/options
  */
+const fetchUserRole = async (userId: string): Promise<string> => {
+  const user = await db.user.findUnique({
+    where: { id: userId },
+    select: { role: true },
+  });
+
+  return user?.role || "defaultRole";
+};
+
 export const authOptions: NextAuthOptions = {
   callbacks: {
-    session: ({ session, user }) => ({
-      ...session,
-      user: {
-        ...session.user,
-        id: user.id,
-      },
-    }),
+    session: async ({ session, user }) => {
+      const role = await fetchUserRole(user.id);
+      return {
+        ...session,
+        user: {
+          ...session.user,
+          id: user.id,
+          role: role,
+        },
+      };
+    },
   },
   adapter: PrismaAdapter(db),
   providers: [
